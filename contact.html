@@ -1,0 +1,29 @@
+<div class="card">
+  <form
+    id="contactForm"
+    class="contact-form"
+    action="https://formspree.io/f/mjgggyqr"
+    method="POST"
+  >
+    <!-- Formspree extras -->
+    <input type="hidden" name="_subject" value="Контакт от сайта (LZ1KAM)" />
+    <input type="hidden" name="_replyto" value="" />
+    <input type="hidden" name="form_loaded_at" id="formLoadedAt" value="" />
+
+    <div class="contact-grid">
+      <input id="cName" class="select" type="text" name="name" placeholder="Име" required />
+      <input id="cEmail" class="select" type="email" name="email" placeholder="Email" required />
+    </div>
+
+    <textarea id="cMsg" class="select" name="message" rows="6" placeholder="Съобщение" required></textarea>
+
+    <!-- Honeypot anti-spam -->
+    <input type="text" name="_gotcha" style="display:none" autocomplete="off" />
+
+    <div class="form-actions">
+      <button class="btn" type="submit" id="contactSubmitBtn">Изпрати</button>
+    </div>
+  </form>
+
+  <p id="contactStatus" class="contact-note" aria-live="polite"></p>
+</div>

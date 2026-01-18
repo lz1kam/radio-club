@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Радиолюбителски архив</title>
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <!-- TOP INFO BAR (logo + info) -->
+  <div class="header-top">
+    <div class="container header-top-inner">
+      <div class="brand">
+        <!-- място за ЛОГО -->
+        <div class="logo-slot" aria-label="Logo">
+          <!-- ако имаш лого файл, смени със <img src="assets/img/logo.png" alt="LZ1KAM"> -->
+          <span aria-hidden="true">📡</span>
+        </div>
+
+        <div class="brand-text">
+          <div class="title" id="siteTitle">ВИНАГИ СЛУШАМЕ</div>
+          <div class="subtitle" id="siteSubtitle">ДОРИ В ТИШИНАТА</div>
+        </div>
+      </div>
+
+      <!-- място за допълнителна информация -->
+      <div class="header-meta">
+        <div class="meta-line" id="metaLine1">ВИНАГИ СЛУШАМЕ</div>
+        <div class="meta-line muted" id="metaLine2">ДОРИ В ТИШИНАТА</div>
+      </div>
+
+      <div class="header-actions">
+        <select id="langSelect" class="select" aria-label="Language">
+          <option value="bg">BG</option>
+          <option value="en">EN</option>
+        </select>
+
+        <button id="menuBtn" class="iconbtn" aria-label="Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV BAR (menu row) -->
+  <div class="header-nav">
+    <div class="container header-nav-inner">
+      <nav class="topnav" id="nav" aria-label="Main navigation"></nav>
+    </div>
+
+    <!-- Mobile nav panel -->
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+      <div class="container">
+        <nav class="mobile-nav-inner" id="mobileNavInner" aria-label="Mobile navigation"></nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container">
+    <div class="content-header">
+      <h1 id="pageTitle"> </h1>
+      <div id="breadcrumbs" class="breadcrumbs"></div>
+    </div>
+
+    <article id="pageContent" class="card"></article>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <small id="footerText">© Радиолюбителски клуб</small>
+    <small id="footerText">Дизайн и Изработка - LZ1REB</small>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <div class="lightbox-backdrop" data-close="1"></div>
+
+  <div class="lightbox-panel" role="dialog" aria-modal="true">
+    <button class="iconbtn close" data-close="1" aria-label="Close">✕</button>
+
+    <img id="lightboxImg" alt="" />
+    <div id="lightboxCaption" class="caption"></div>
+
+    <div class="lightbox-actions">
+      <button class="btn" id="prevBtn">←</button>
+      <button class="btn" id="nextBtn">→</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
