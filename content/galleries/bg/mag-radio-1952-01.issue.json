@@ -1,0 +1,12 @@
+{
+  "type": "issue",
+  "title": "Списание „Радио“ – 1952 / брой 1",
+  "intro": "Кликни върху страница за голям размер. Със стрелките сменяш страниците.",
+  "folder": "images/magazines/radio/1952_01",
+  "pages": { "from": 1, "to": 64, "pad": 2 },
+  "cover": "cover.jpg",
+  "back": "back.jpg",
+  "pagePrefix": "p",
+  "ext": "jpg",
+  "pageDescPrefix": "Стр."
+}

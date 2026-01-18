@@ -1,0 +1,36 @@
+{
+  "title": "„Радио и Телевизия“ – 1957 / брой 1",
+  "intro": "Примерна структура за сканирани страници.",
+  "items": [
+    {
+      "thumb": "images/magazines/rt/1957_01/cover.jpg",
+      "full": "images/magazines/rt/1957_01/cover.jpg",
+      "desc": "Корица"
+    },
+    {
+      "thumb": "images/magazines/rt/1957_01/p01.jpg",
+      "full": "images/magazines/rt/1957_01/p01.jpg",
+      "desc": "Стр. 1"
+    },
+    {
+      "thumb": "images/magazines/rt/1957_01/p02.jpg",
+      "full": "images/magazines/rt/1957_01/p02.jpg",
+      "desc": "Стр. 2"
+    },
+    {
+      "thumb": "images/magazines/rt/1957_01/p03.jpg",
+      "full": "images/magazines/rt/1957_01/p03.jpg",
+      "desc": "Стр. 3"
+    },
+    {
+      "thumb": "images/magazines/rt/1957_01/p04.jpg",
+      "full": "images/magazines/rt/1957_01/p04.jpg",
+      "desc": "Стр. 4"
+    },
+    {
+      "thumb": "images/magazines/rt/1957_01/back.jpg",
+      "full": "images/magazines/rt/1957_01/back.jpg",
+      "desc": "Задна корица"
+    }
+  ]
+}

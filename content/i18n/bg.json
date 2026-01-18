@@ -1,0 +1,106 @@
+{
+  "siteTitle": "LZ1KAM - РАДИО КЛУБ ХАСКОВО",
+  "siteSubtitle": "КВ • УКВ • Радио засичане • Радио събори • Списания",
+  "footerText": "© 2026 LZ1KAM Radio Club Haskovo QTH Haskovo, KN21SW",
+
+  "loading": "Зареждане...",
+  "notFound": "Няма налично съдържание.",
+  "year": "Година",
+  "search": "Търсене (име / описание)",
+  "noItems": "Няма записи за избрания филтър.",
+  "back": "Назад",
+
+  "nav": [
+    {
+      "id": "home",
+      "title": "Начало",
+      "type": "md",
+      "src": "home.md",
+      "icon": "🏠"
+    },
+
+    {
+      "id": "council",
+      "title": "Управителен съвет",
+      "type": "md",
+      "src": "council.md",
+      "icon": "👥"
+    },
+    {
+      "id": "councilPhotos",
+      "title": "Управителен съвет – Снимки",
+      "type": "gallery",
+      "src": "council-photos.json",
+      "icon": "🖼️"
+    },
+
+    {
+      "id": "kvArchive",
+      "title": "КВ – Архив",
+      "type": "archive",
+      "src": "kv.json",
+      "icon": "📡"
+    },
+    {
+      "id": "ukvArchive",
+      "title": "УКВ – Архив",
+      "type": "archive",
+      "src": "ukv.json",
+      "icon": "📶"
+    },
+    {
+      "id": "rzArchive",
+      "title": "Радио засичане – Архив",
+      "type": "archive",
+      "src": "radio-zasichane.json",
+      "icon": "📻"
+    },
+    {
+      "id": "rsArchive",
+      "title": "Радио събори – Архив",
+      "type": "archive",
+      "src": "radio-sabori.json",
+      "icon": "🏕️"
+    },
+    {
+      "id": "digitalGroup",
+      "title": "Цифрова група – Снимки",
+      "type": "gallery",
+      "src": "digital-group.json",
+      "icon": "💻"
+    },
+
+    {
+      "id": "magazines",
+      "title": "Списания",
+      "type": "archive",
+      "src": "magazines.json",
+      "icon": "📚",
+      "badge": "архив"
+    },
+
+    {
+      "id": "news",
+      "title": "Новини",
+      "type": "md",
+      "src": "news.md",
+      "icon": "📰",
+      "badge": "скоро"
+    },
+    {
+      "id": "links",
+      "title": "Връзки",
+      "type": "md",
+      "src": "links.md",
+      "icon": "🔗"
+    },
+
+    {
+      "id": "schemes",
+      "title": "Схеми и документация",
+      "type": "md",
+      "src": "schemes.md",
+      "icon": "📄"
+    }
+  ]
+}

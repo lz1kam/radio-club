@@ -1,0 +1,16 @@
+{
+  "title": "Управителен съвет – Снимки",
+  "intro": "Снимки с описания. Кликни върху снимка за голям размер.",
+  "items": [
+    {
+      "thumb": "images/council/001.jpg",
+      "full": "images/council/001.jpg",
+      "desc": "Снимка 1 – Описание (пример)"
+    },
+    {
+      "thumb": "images/council/002.jpg",
+      "full": "images/council/002.jpg",
+      "desc": "Снимка 2 – Описание (пример)"
+    }
+  ]
+}
