@@ -127,7 +127,7 @@ a{color:inherit}
   align-items:center;
 
   /* Гъвкаво разстояние между бутоните според ширината */
-  gap: clamp(4px, 0.8vw, 10px);
+  gap: clamp(2px, 0.5vw, 2px);
 
   flex-wrap: nowrap;              /* <= един ред */
   width: 100%;
@@ -152,12 +152,13 @@ a{color:inherit}
   justify-content: center;
 
   /* Автоматично адаптивно разстояние между бутоните */
-  gap: clamp(4px, 0.8vw, 10px);
+  gap: clamp(2px, 0.5vw, 2px);
+
 
   /* Един ред */
   flex-wrap: nowrap;
 
-  /* Заема цялата ширина на контейнера */
+  /* Заема цялата ширина на ейнера */
   width: 100%;
 
   /* Безопасен fallback при много бутони */
@@ -194,6 +195,10 @@ a{color:inherit}
 
   white-space: nowrap;
 
+  /* ✅ НОВО: да не излиза текстът извън бутона */
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   /* Позволява леко свиване */
   flex: 0 1 auto;
   min-width: 0;
@@ -204,6 +209,14 @@ a{color:inherit}
     border-color .12s ease,
     background .12s ease;
 }
+
+/* ✅ НОВО: active ефект като вертикалното меню (черен бутон) */
+.topnav a.active{
+  background: rgba(27,27,27,.92);
+  color: rgba(251,246,239,.95);
+  border-color: rgba(27,27,27,.22);
+}
+
 
 /* HOME icon (🏠) */
 .topnav a.home-link{
@@ -589,3 +602,140 @@ a{color:inherit}
   background-image: none !important;
 }
 
+
+
+/* --- Sidebar layout (vertical menu) --- */
+.page-grid{
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.page-grid.no-sidebar{
+  grid-template-columns: 1fr;
+}
+.sidebar{
+  position: sticky;
+  top: 118px; /* под sticky header */
+  align-self: start;
+}
+.sidebar[aria-hidden="true"]{
+  display: none;
+}
+.sidebar-card{
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(27,27,27,.10);
+  border-radius: 18px;
+  padding: 14px;
+}
+.subnav[aria-hidden="true"]{ display:none; }
+.subnav-title{
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(27,27,27,.62);
+  margin: 2px 4px 10px;
+}
+.subnav-list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.subnav a{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid rgba(27,27,27,.10);
+  background: rgba(255,255,255,.55);
+  color: rgba(27,27,27,.86);
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  white-space: nowrap;
+}
+.subnav a:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.72);
+  border-color: rgba(27,27,27,.18);
+}
+.subnav a.active{
+  background: rgba(27,27,27,.92);
+  color: rgba(251,246,239,.95);
+  border-color: rgba(27,27,27,.22);
+}
+@media (max-width: 920px){
+  .page-grid{ grid-template-columns: 1fr; }
+  .sidebar{ position: static; }
+}
+
+
+/* ===== MENU TYPO FIXES (addon) =====
+   - Main menu font size matches sidebar
+   - Main menu text never overflows button (ellipsis)
+   - Sidebar items can wrap to 2+ lines without overflowing
+*/
+.topnav a{
+  font-size: 13px;              /* match sidebar size */
+  font-weight: 700;
+  line-height: 1.15;
+  max-width: 100%;
+  overflow: hidden;             /* prevent overflow outside pill */
+  text-overflow: ellipsis;      /* keep inside button */
+  white-space: nowrap;          /* single line in main menu */
+}
+
+.subnav a{
+  font-size: 13px;              /* ensure same size as main menu */
+  font-weight: 700;
+  line-height: 1.25;
+
+  white-space: normal;          /* allow wrapping */
+  overflow: hidden;             /* prevent spill outside button */
+  overflow-wrap: anywhere;      /* break long words safely */
+  word-break: break-word;
+}
+
+
+
+/* ===== CONTACT FORM LAYOUT (addon) =====
+   Desktop: Име + Фамилия (2 колони), после Email и Съобщение на цяла ширина
+   Mobile: Име и Фамилия стават едно под друго автоматично
+*/
+.contact-form{
+  display: grid;
+  gap: 10px; /* разстояние между всички полета */
+}
+
+.contact-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.contact-form .contact-full{
+  width: 100%;
+}
+
+.contact-form textarea{
+  margin-top: 0; /* вече имаме gap */
+}
+
+@media (max-width: 640px){
+  .contact-grid{
+    grid-template-columns: 1fr;
+  }
+}
+/* Active ефект за главното меню – работи и ако active е на <a> или на <li> */
+.topnav a.active,
+.topnav a[aria-current="page"],
+.topnav li.active > a{
+  background: rgba(27,27,27,.92) !important;
+  color: rgba(251,246,239,.95) !important;
+  border-color: rgba(27,27,27,.22) !important;
+}

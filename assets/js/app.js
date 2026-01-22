@@ -12,6 +12,161 @@ const state = {
   galleryItems: [],
   galleryIndex: 0
 };
+// ------------------------
+// Sidebar (vertical menu) configuration
+// ------------------------
+const HIDDEN_NAV_IDS = [
+  "councilPhotos",
+  "councilRTE1963_1986",
+  "kvActivityTo1999",
+  "kvDiplomas",
+  "kvMagRadio1952_1956",
+  "kvRTE1959_1987",
+  "otherFactoryDevices",
+  "otherSchemes",
+  "otherSchemesKvUkv",
+  "otherSchemesRz",
+  "rs1993_2010",
+  "rs2014_2021",
+  "rs2022_2030",
+  "rsPhotosDiplomas",
+  "rz1996_2012",
+  "rz2013_2021",
+  "rz2022_2030",
+  "rzPhotosDiplomas",
+  "rzRTE1970_2002",
+  "rzRadioTV1957_1969",
+  "ukvDiplomas",
+  "ukvRTE1966_1989",
+  "ukvRepeaters",
+  "ukvTo1992",
+  "ukvTo2008",
+  "ukvTo2013",
+  "ukvTo2015",
+  "ukvTo2026",
+  "ukvTo2030"
+];
+
+const SUBNAV_GROUPS = {
+  "council": [
+    "councilPhotos",
+    "councilRTE1963_1986"
+  ],
+  "kvArchive": [
+    "kvDiplomas",
+    "kvMagRadio1952_1956",
+    "kvRTE1959_1987",
+    "kvActivityTo1999"
+  ],
+  "ukvArchive": [
+    "ukvDiplomas",
+    "ukvRepeaters",
+    "ukvRTE1966_1989",
+    "ukvTo1992",
+    "ukvTo2008",
+    "ukvTo2013",
+    "ukvTo2015",
+    "ukvTo2026",
+    "ukvTo2030"
+  ],
+  "rzArchive": [
+    "rzPhotosDiplomas",
+    "rzRadioTV1957_1969",
+    "rzRTE1970_2002",
+    "rz1996_2012",
+    "rz2013_2021",
+    "rz2022_2030"
+  ],
+  "rsArchive": [
+    "rsPhotosDiplomas",
+    "rs1993_2010",
+    "rs2014_2021",
+    "rs2022_2030"
+  ],
+  "schemes": [
+    "otherSchemesKvUkv",
+    "otherSchemesRz",
+    "otherFactoryDevices",
+    "otherSchemes"
+  ]
+};
+
+function getSubnavRootId(currentId) {
+  // If currentId itself is a root key
+  if (SUBNAV_GROUPS[currentId]) return currentId;
+  // Otherwise find a root that contains it
+  for (const [rootId, ids] of Object.entries(SUBNAV_GROUPS)) {
+    if (ids.includes(currentId)) return rootId;
+  }
+  return null;
+}
+
+function renderSubnavFor(currentId) {
+  const sidebar = document.getElementById("sidebar");
+  const grid = document.getElementById("pageGrid");
+  const subnav = document.getElementById("subnav");
+  if (!sidebar || !grid || !subnav) return;
+
+  const rootId = getSubnavRootId(currentId);
+  if (!rootId) {
+    subnav.innerHTML = "";
+    subnav.setAttribute("aria-hidden", "true");
+    sidebar.setAttribute("aria-hidden", "true");
+    grid.classList.add("no-sidebar");
+    return;
+  }
+
+  const rootItem = (state.nav || []).find(x => x.id === rootId);
+  const ids = SUBNAV_GROUPS[rootId] || [];
+  const items = ids.map(id => (state.nav || []).find(x => x.id === id)).filter(Boolean);
+
+  if (!items.length) {
+    subnav.innerHTML = "";
+    subnav.setAttribute("aria-hidden", "true");
+    sidebar.setAttribute("aria-hidden", "true");
+    grid.classList.add("no-sidebar");
+    return;
+  }
+
+  const title = document.createElement("div");
+  title.className = "subnav-title";
+  title.textContent = rootItem ? (rootItem.title || rootId) : rootId;
+
+  const ul = document.createElement("ul");
+  ul.className = "subnav-list";
+
+  // include root itself as first item (so user can always return)
+  if (rootItem) {
+    const li0 = document.createElement("li");
+    const a0 = document.createElement("a");
+    a0.href = `#${rootId}`;
+    a0.dataset.id = rootId;
+    a0.textContent = rootItem.title || rootId;
+    if (currentId === rootId) a0.classList.add("active");
+    li0.appendChild(a0);
+    ul.appendChild(li0);
+  }
+
+  items.forEach(it => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `#${it.id}`;
+    a.dataset.id = it.id;
+    a.textContent = it.title || it.id;
+    if (currentId === it.id) a.classList.add("active");
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+
+  subnav.innerHTML = "";
+  subnav.appendChild(title);
+  subnav.appendChild(ul);
+
+  subnav.setAttribute("aria-hidden", "false");
+  sidebar.setAttribute("aria-hidden", "false");
+  grid.classList.remove("no-sidebar");
+}
+
 
 // ------------------------
 // URL language helpers
@@ -149,7 +304,7 @@ function setHeaderTexts() {
   if (footerText) footerText.textContent = state.i18n.footerText || "";
 
   if (footerContactLink) {
-    footerContactLink.textContent = state.lang === "en" ? "Contact" : "Контакти";
+    footerContactLink.textContent = state.lang === "en" ? "Contact" : "КОНТАКТИ";
   }
 }
 
@@ -184,9 +339,10 @@ mobileNavEl.appendChild(homeLinkMobile);
 
 
   // apply your menu rules (filter + rename)
-  const finalItems = applyMenuRules(state.nav, state.lang);
-
-  for (const it of finalItems) {
+  const finalItems = applyMenuRules(state.nav, state.lang)
+    .filter(it => !HIDDEN_NAV_IDS.includes(it.id))
+    .filter(it => it.id !== 'contact');
+for (const it of finalItems) {
     const a = document.createElement("a");
     a.href = `#${it.id}`;
     a.dataset.id = it.id;
@@ -201,7 +357,7 @@ mobileNavEl.appendChild(homeLinkMobile);
   }
 
   // Contact as last
-  const contactTitle = state.lang === "en" ? "Contact" : "Контакти";
+  const contactTitle = state.lang === "en" ? "Contact" : "КОНТАКТИ";
   const c1 = document.createElement("a");
   c1.href = "#contact";
   c1.dataset.id = "contact";
@@ -229,6 +385,13 @@ function highlightActive() {
 // ------------------------
 async function loadContactPage() {
   state.current = "contact";
+  highlightActive();
+
+  // Контакти НЕ трябва да показват sidebar
+  // (ако при теб трябва да се показва — кажи)
+  if (typeof renderSubnav === "function") {
+    renderSubnav(null);
+  }
 
   const pageTitle = $("#pageTitle");
   const breadcrumbs = $("#breadcrumbs");
@@ -236,26 +399,30 @@ async function loadContactPage() {
 
   if (pageTitle) pageTitle.textContent = (state.lang === "en") ? "Contact" : "Контакти";
   if (breadcrumbs) breadcrumbs.textContent = "";
-  highlightActive();
 
   if (!contentEl) return;
+
   contentEl.innerHTML = `<p style="color:var(--muted)">${escapeHtml(state.i18n.loading || "Зареждане...")}</p>`;
 
   try {
-    const html = await fetchText("contact.html");
+    const html = await fetchText(`content/pages/${state.lang}/contact.html`);
     contentEl.innerHTML = html;
-    // ако имаш wireContactForm / локализация в твоята версия – остави си ги
-    wireContactForm(contentEl);
+
+    // ако съществува функция за “закачане” на submit handler — извикай я, но само ако я има
+    if (typeof wireContactForm === "function") {
+      wireContactForm(contentEl);
+    }
   } catch (err) {
     console.error(err);
     contentEl.innerHTML = `
       <div class="card">
-        <h3 style="margin-top:0">Грешка</h3>
+        <h3 style="margin-top:0">Грешка при зареждане на Контакти</h3>
         <p style="color:var(--muted)">${escapeHtml(err.message || String(err))}</p>
       </div>
     `;
   }
 }
+
 
 // ------------------------
 // Formspree submit (ако вече го имаш – остави; тук е минимално)
@@ -332,6 +499,9 @@ scopeEl.innerHTML = `
 // ------------------------
 async function loadPageById(id) {
   if (id === "contact") {
+    state.current = "contact";
+    highlightActive();
+    renderSubnavFor(null);
     await loadContactPage();
     return;
   }
@@ -349,6 +519,7 @@ async function loadPageById(id) {
   if (breadcrumbs) breadcrumbs.textContent = item.breadcrumbs || item.group || "";
 
   highlightActive();
+  renderSubnavFor(item.id);
 
   if (!contentEl) return;
   contentEl.innerHTML = `<p style="color:var(--muted)">${escapeHtml(state.i18n.loading || "Зареждане...")}</p>`;
@@ -365,6 +536,9 @@ async function loadPageById(id) {
     } else if (item.type === "archive") {
       const data = await fetchJson(`content/archives/${state.lang}/${item.src}`);
       renderArchive(data, contentEl);
+    } else if (item.type === "contact") {
+      // Контакти: зареждаме HTML формата
+      await loadContactPage();
 
     } else {
       contentEl.innerHTML = `<p>${escapeHtml(state.i18n.notFound || "Няма съдържание.")}</p>`;
