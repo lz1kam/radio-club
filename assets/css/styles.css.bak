@@ -321,7 +321,7 @@ a{color:inherit}
 .mobile-nav{
   display:none;
   border-top: 1px solid rgba(27,27,27,.10);
-  background: #fbf6efe6;
+  background: rgba(251,246,239,.90);
 }
 .mobile-nav[aria-hidden="false"]{ display:block; }
 
@@ -355,21 +355,6 @@ a{color:inherit}
 }
 
 .breadcrumbs{ color: var(--muted); font-size: 13px; }
-
-/* Breadcrumbs home button (used on legal pages) */
-.breadcrumbs .home-link{
-  display: inline-grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(27,27,27,.14);
-  border-radius: 10px;
-  text-decoration: none;
-  color: rgba(27,27,27,.92);
-  background: rgba(255,255,255,.7);
-}
-.breadcrumbs .home-link:hover{ text-decoration:none; box-shadow: var(--shadow2); transform: translateY(-1px); }
-.breadcrumbs .crumb-current{ margin-left: 0; color: rgba(27,27,27,.92); font-family: var(--fontHead); font-size: clamp(18px, 1.6vw, 24px); font-weight: 700; letter-spacing: -0.01em; }
 
 /* Card */
 .card{
@@ -456,7 +441,7 @@ a{color:inherit}
 .lightbox-actions{ display:flex; justify-content: space-between; padding: 0 16px 16px; gap: 10px; }
 
 /* Footer */
-.footer{ border-top: 1px solid rgba(27,27,27,.12); background: rgba(251,246,239,.75); font-size: 11px; }
+.footer{ border-top: 1px solid rgba(27,27,27,.12); background: rgba(251,246,239,.75); font-size: 12px; }
 .footer-inner{
   display:flex;
   align-items:center;
@@ -479,7 +464,7 @@ a{color:inherit}
 
 /* Footer (expanded, 3 columns) */
 .footer-wrap{ padding: 26px 0 18px; color: var(--muted); }
-.footer-grid{ display:grid; grid-template-columns: 1.25fr 2fr; column-gap: 76px; row-gap: 22px; padding: 22px 0; }
+.footer-grid{ display:grid; grid-template-columns: 1.25fr 2fr; column-gap: 40px; row-gap: 22px; padding: 22px 0; }
 .footer-title{ font-weight: 800; color: rgba(27,27,27,.92); letter-spacing: .02em;  font-size: inherit; }
 .footer-blurb{ margin-top: 6px; line-height: 1.35; color: var(--muted); }
 .footer-spacer{ height: 12px; }
@@ -778,78 +763,9 @@ a{color:inherit}
 
 /* Footer: separate legal column from navigation columns */
 .footer-colgroup{ display:block; }
-.footer-grid-inner{
-  display:grid;
-  /* Keep the 3rd column fixed at the right edge and move the 2nd closer to it */
-  grid-template-columns: auto auto;
-  justify-content: end;
-  /* Slightly larger gap between column 2 and 3 for better readability */
-  column-gap: 32px;
-  row-gap: 10px;
-  align-items: start;
-}
-
-/* Breadcrumb "Home" icon on legal pages */
-.breadcrumbs .home-link{
-  display: inline-grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid rgba(27,27,27,.12);
-  border-radius: 10px;
-  text-decoration: none;
-  color: rgba(27,27,27,.92);
-  margin-right: 12px;
-}
-
-.breadcrumbs .home-link:hover{ text-decoration: none; box-shadow: var(--shadow2); transform: translateY(-1px); }
+.footer-grid-inner{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
 @media (max-width: 820px){
   .footer-grid{ grid-template-columns: 1fr; column-gap: 0; }
-  .footer-grid-inner{ grid-template-columns: 1fr; gap: 10px; }
-}
-
-
-/* Footer overrides: unify font size and improve column grouping */
-.footer-title,
-.footer-blurb,
-.footer-links a,
-.footer-links--small a,
-.footer-sublink,
-.footer-bottom{
-  font-size: inherit;
-}
-
-.footer-col--legal{
-  padding-right: 20px;
-}
-
-
-/* ===== тествам нова цветова гама ===== */
-/* ===== MILITARY RADIO TEST ===== */
-
-body { background-color: #060b0a; }
-header { background-color: #0d1916; }
-main { background-color: #132421; }
-footer { background-color: #040807; }
-
-/* ===== END TEST ===== */
-
-h1 { color: #ffffff !important; }
-
-/* ===== MOBILE MENU BACKGROUND ===== */
-
-.mobile-menu,
-.nav-mobile,
-nav.open,
-nav.active {
-  background-color: var(--bg-main) !important;
-}
-
-/* ===== END ===== */
-/* Mobile nav */
-.mobile-nav{
-  display:none;
-  border-top: 1px solid rgba(27,27,27,.10);
-  background: #132421;
+  .footer-grid-inner{ grid-template-columns: 1fr; gap: 12px; }
 }

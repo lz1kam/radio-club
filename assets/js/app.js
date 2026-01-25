@@ -44,7 +44,14 @@ const HIDDEN_NAV_IDS = [
   "ukvTo2013",
   "ukvTo2015",
   "ukvTo2026",
-  "ukvTo2030"
+  "ukvTo2030",
+
+  // Legal / policy pages (shown via footer links only)
+  "terms",
+  "legal",
+  "privacy",
+  "cookies",
+  "logoTrademark"
 ];
 
 const SUBNAV_GROUPS = {
@@ -658,14 +665,20 @@ async function bootstrap() {
   setHeaderTexts();
   renderNav();
 
-  const initialId = (location.hash || `#${state.nav[0].id}`).replace("#", "");
-  await loadPageById(initialId);
+  // Some pages (e.g. legal/static pages) have their own static HTML content and
+  // should NOT be replaced by the hash-based router.
+  const isStaticPage = document.body && document.body.classList.contains("static-page");
 
-  window.addEventListener("hashchange", async () => {
-    const id = (location.hash || "").replace("#", "") || state.nav[0].id;
-    await loadPageById(id);
-    setMobileNavOpen(false);
-  });
+  if (!isStaticPage) {
+    const initialId = (location.hash || `#${state.nav[0].id}`).replace("#", "");
+    await loadPageById(initialId);
+
+    window.addEventListener("hashchange", async () => {
+      const id = (location.hash || "").replace("#", "") || state.nav[0].id;
+      await loadPageById(id);
+      setMobileNavOpen(false);
+    });
+  }
 
   if (langSelect) {
     langSelect.addEventListener("change", async (e) => {

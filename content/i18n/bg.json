@@ -267,6 +267,36 @@
       "title": "СХЕМИ",
       "type": "md",
       "src": "other-schemes.md"
+    },
+    {
+      "id": "terms",
+      "title": "ОБЩИ УСЛОВИЯ ЗА ПОЛЗВАНЕ",
+      "type": "md",
+      "src": "terms.md"
+    },
+    {
+      "id": "legal",
+      "title": "ПРАВНА ИНФОРМАЦИЯ",
+      "type": "md",
+      "src": "legal.md"
+    },
+    {
+      "id": "privacy",
+      "title": "ПОЛИТИКА ЗА ПОВЕРИТЕЛНОСТ",
+      "type": "md",
+      "src": "privacy.md"
+    },
+    {
+      "id": "cookies",
+      "title": "ПОЛИТИКА ЗА ИЗПОЛЗВАНЕ НА БИСКВИТКИ",
+      "type": "md",
+      "src": "cookies.md"
+    },
+    {
+      "id": "logoTrademark",
+      "title": "ПОЛИТИКА ЗА ИЗПОЛЗВАНЕ НА ЛОГО И ТЪРГОВСКА ИДЕНТИЧНОСТ",
+      "type": "md",
+      "src": "logo-trademark.md"
     }
   ]
 }
