@@ -823,33 +823,3 @@ a{color:inherit}
 .footer-col--legal{
   padding-right: 20px;
 }
-
-
-/* ===== тествам нова цветова гама ===== */
-/* ===== MILITARY RADIO TEST ===== */
-
-body { background-color: #060b0a; }
-header { background-color: #0d1916; }
-main { background-color: #132421; }
-footer { background-color: #040807; }
-
-/* ===== END TEST ===== */
-
-h1 { color: #ffffff !important; }
-
-/* ===== MOBILE MENU BACKGROUND ===== */
-
-.mobile-menu,
-.nav-mobile,
-nav.open,
-nav.active {
-  background-color: var(--bg-main) !important;
-}
-
-/* ===== END ===== */
-/* Mobile nav */
-.mobile-nav{
-  display:none;
-  border-top: 1px solid rgba(27,27,27,.10);
-  background: #132421;
-}
