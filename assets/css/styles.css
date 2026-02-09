@@ -110,6 +110,23 @@ a{color:inherit}
   align-items:center;
 }
 
+/* Font size controls (A-/A+) */
+.font-controls{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.fontbtn{
+  min-width: 44px;
+  padding: 10px 12px;
+  font-weight: 800;
+  letter-spacing: .01em;
+}
+
+@media (max-width: 520px){
+  .fontbtn{ padding: 9px 10px; min-width: 40px; }
+}
+
 /* Nav row */
 .header-nav{
   background: rgba(251, 246, 239, .70);
@@ -346,15 +363,20 @@ a{color:inherit}
 /* Page */
 .page{ padding: 34px 0 40px; }
 .content-header{ margin: 6px 0 14px; }
+.maincol{
+  /* Accessibility: scale ONLY the main content area (not menus/footers). */
+  font-size: calc(1rem * var(--contentScale, 1));
+}
 .content-header h1{
   margin: 0 0 8px 0;
   font-family: var(--fontHead);
-  font-size: clamp(18px, 1.6vw, 24px);
+  /* Use em so it respects .maincol font scaling */
+  font-size: clamp(1.125em, 1.6vw, 1.5em);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
-.breadcrumbs{ color: var(--muted); font-size: 13px; }
+.breadcrumbs{ color: var(--muted); font-size: 0.8125em; }
 
 /* Breadcrumbs home button (used on legal pages) */
 .breadcrumbs .home-link{
@@ -369,7 +391,7 @@ a{color:inherit}
   background: rgba(255,255,255,.7);
 }
 .breadcrumbs .home-link:hover{ text-decoration:none; box-shadow: var(--shadow2); transform: translateY(-1px); }
-.breadcrumbs .crumb-current{ margin-left: 0; color: rgba(27,27,27,.92); font-family: var(--fontHead); font-size: clamp(18px, 1.6vw, 24px); font-weight: 700; letter-spacing: -0.01em; }
+.breadcrumbs .crumb-current{ margin-left: 0; color: rgba(27,27,27,.92); font-family: var(--fontHead); font-size: clamp(1.125em, 1.6vw, 1.5em); font-weight: 700; letter-spacing: -0.01em; }
 
 /* Card */
 .card{
@@ -822,4 +844,100 @@ a{color:inherit}
 
 .footer-col--legal{
   padding-right: 20px;
+}
+
+
+/* Content header: title left, font controls right (same line) */
+.content-header{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 6px 0 14px;
+}
+
+.content-titleblock{
+  min-width: 0;
+}
+
+.content-font-controls{
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 520px){
+  .content-header{
+    align-items: flex-start;
+  }
+}
+
+
+/* NEWS cards */
+.news-list{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.news-card{
+  padding: 0; /* internal layout handles spacing */
+  overflow: hidden;
+}
+
+.news-thumb img{
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.news-body{
+  padding: 18px 20px 20px;
+}
+
+.news-meta{
+  font-size: 0.85em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.news-title{
+  margin: 0 0 10px 0;
+  font-family: var(--fontHead);
+  letter-spacing: -0.02em;
+}
+
+.news-summary p{ margin: 0 0 10px 0; }
+
+.news-more{
+  display: inline-block;
+  margin-top: 4px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.news-more:hover{ text-decoration: underline; }
+
+.news-detail .news-back{
+  display: inline-block;
+  margin: 0 0 12px 0;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.news-image{
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.news-card--detail .news-body{
+  padding-top: 16px;
+}
+
+@media (min-width: 900px){
+  .news-thumb img{ height: 260px; }
+  .news-image{ height: 380px; }
 }

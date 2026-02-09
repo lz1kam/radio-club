@@ -8,10 +8,91 @@ const state = {
   nav: [],
   current: null,
 
+  // accessibility
+  fontScale: 1,
+
   // gallery/lightbox
   galleryItems: [],
   galleryIndex: 0
 };
+
+// ------------------------
+// External News (Google Sheets) configuration
+// ------------------------
+// 1) Create a Google Sheet and add a header row with these columns:
+//    slug | date | title | summary | content | image
+//    - slug: unique id (latin, no spaces) e.g. "2026-02-09-site-update"
+//    - date: free text, e.g. "09.02.2026"
+//    - summary: short teaser (Markdown allowed)
+//    - content: full text (Markdown allowed)
+//    - image: optional image URL (https://...)
+// 2) File -> Share -> Publish to the web (publish the sheet)
+// 3) Put your Sheet ID + GID below.
+const NEWS_SHEET_ID = "18pwO21qkLoccc3N8Ckj5S-IK1l2GM0NLYdi6U0uuBgA";
+const NEWS_SHEET_GID = "0";
+
+
+const NEWS_PAGE_ID = "news";
+
+// ------------------------
+// Font size controls (A-/A+) – scales ONLY the main content area (not menus).
+// We persist a scale factor and expose it via a CSS custom property.
+// CSS applies the scaling only under .maincol.
+// ------------------------
+const FONT_SCALE_KEY = "lz1kam_fontScale";
+const FONT_SCALE_MIN = 0.85;
+const FONT_SCALE_MAX = 1.60;
+const FONT_SCALE_STEP = 0.10;
+
+function clamp(n, a, b){ return Math.min(b, Math.max(a, n)); }
+
+function getStoredFontScale(){
+  try {
+    const v = parseFloat(localStorage.getItem(FONT_SCALE_KEY));
+    return Number.isFinite(v) ? v : 1;
+  } catch { return 1; }
+}
+
+function storeFontScale(v){
+  try { localStorage.setItem(FONT_SCALE_KEY, String(v)); } catch {}
+}
+
+function applyContentScale(){
+  // Set on :root so it is available immediately; CSS limits the scope.
+  document.documentElement.style.setProperty("--contentScale", String(state.fontScale));
+}
+
+function setFontScale(newScale){
+  state.fontScale = clamp(newScale, FONT_SCALE_MIN, FONT_SCALE_MAX);
+  storeFontScale(state.fontScale);
+  applyContentScale();
+  updateFontButtons();
+}
+
+function updateFontButtons(){
+  const dec = document.getElementById("fontDec");
+  const inc = document.getElementById("fontInc");
+  if (dec) dec.disabled = state.fontScale <= (FONT_SCALE_MIN + 1e-6);
+  if (inc) inc.disabled = state.fontScale >= (FONT_SCALE_MAX - 1e-6);
+}
+
+function initFontControls(){
+  state.fontScale = getStoredFontScale();
+
+  const dec = document.getElementById("fontDec");
+  const inc = document.getElementById("fontInc");
+
+  if (dec){
+    dec.addEventListener("click", () => setFontScale(state.fontScale - FONT_SCALE_STEP));
+  }
+  if (inc){
+    inc.addEventListener("click", () => setFontScale(state.fontScale + FONT_SCALE_STEP));
+  }
+
+  // Apply immediately on start.
+  applyContentScale();
+  updateFontButtons();
+}
 // ------------------------
 // Sidebar (vertical menu) configuration
 // ------------------------
@@ -240,6 +321,180 @@ function mdToHtml(md) {
   return html;
 }
 
+
+// ------------------------
+// NEWS (external Google Sheet)
+// ------------------------
+let _newsCache = null;
+
+function slugify(input){
+  return String(input || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[\u0400-\u04FF]+/g, (m) => m) // keep Cyrillic if present
+    .replace(/[^a-z0-9\u0400-\u04FF]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+
+function normalizeSheetId(value){
+  const v = String(value || "").trim();
+  // Accept a full Google Sheets URL or just the ID.
+  const m = v.match(/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return m ? m[1] : v;
+}
+
+async function fetchNewsFromSheet() {
+  if (_newsCache) return _newsCache;
+
+  if (!NEWS_SHEET_ID || NEWS_SHEET_ID === "PUT_YOUR_SHEET_ID_HERE") {
+    return [];
+  }
+
+  const sheetId = normalizeSheetId(NEWS_SHEET_ID);
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${encodeURIComponent(NEWS_SHEET_GID)}&headers=1`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`News fetch failed (${res.status})`);
+  const text = await res.text();
+
+  // gviz returns: google.visualization.Query.setResponse({...});
+  const match = text.match(/setResponse\(([\s\S]*?)\);\s*$/);
+  if (!match) throw new Error("Unexpected Google Sheets response format.");
+  const data = JSON.parse(match[1]);
+
+  const cols = (data.table?.cols || []).map(c => (c.label || "").trim().toLowerCase());
+  const rows = data.table?.rows || [];
+
+  const idx = (name) => cols.indexOf(String(name).toLowerCase());
+
+  const idxAny = (...names) => {
+    for (const n of names) {
+      const i = idx(n);
+      if (i >= 0) return i;
+    }
+    return -1;
+  };
+
+  const iSlug = idxAny("slug", "id", "ключ", "slug/id");
+  const iDate = idxAny("date", "дата", "дата на публикуване", "published", "published date");
+  const iTitle = idxAny("title", "заглавие", "име", "новина");
+  const iSummary = idxAny("summary", "excerpt", "кратко", "кратък текст", "описание", "резюме");
+  const iContent = idxAny("content", "text", "body", "текст", "пълна новина", "съдържание");
+  const iImage = idxAny("image", "img", "photo", "снимка", "картинка", "image url", "url снимка");
+
+
+  // Fallbacks if Google doesn't expose header labels as expected:
+  // Assume standard column order: slug, date, title, summary, content, image
+  const fallbackByOrder = (i, fallbackIndex) => (i >= 0 ? i : (cols.length > fallbackIndex ? fallbackIndex : -1));
+  const iSlug2 = fallbackByOrder(iSlug, 0);
+  const iDate2 = fallbackByOrder(iDate, 1);
+  const iTitle2 = fallbackByOrder(iTitle, 2);
+  const iSummary2 = fallbackByOrder(iSummary, 3);
+  const iContent2 = fallbackByOrder(iContent, 4);
+  const iImage2 = fallbackByOrder(iImage, 5);
+
+  const getCell = (row, i) => {
+    if (i == null || i < 0) return "";
+    const cell = row?.c?.[i];
+    return cell && (cell.v ?? cell.f) != null ? String(cell.v ?? cell.f) : "";
+  };
+
+  const items = rows.map(r => {
+    const title = getCell(r, iTitle2);
+    const slug = (iSlug2 >= 0 ? getCell(r, iSlug2) : "") || slugify(title);
+    return {
+      slug,
+      date: getCell(r, iDate2),
+      title,
+      summary: getCell(r, iSummary2),
+      content: getCell(r, iContent2),
+      image: getCell(r, iImage2)
+    };
+  }).filter(x => x.title && x.slug);
+
+  // Newest first: try to parse date (supports YYYY-MM-DD, DD.MM.YYYY, etc.)
+  items.sort((a,b) => {
+    const da = Date.parse(a.date.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$3-$2-$1")) || 0;
+    const db = Date.parse(b.date.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$3-$2-$1")) || 0;
+    return db - da;
+  });
+
+  _newsCache = items;
+  return items;
+}
+
+async function renderNews(mountEl, detailSlug) {
+  const items = await fetchNewsFromSheet();
+
+  // Detail view
+  if (detailSlug) {
+    const post = items.find(x => x.slug === detailSlug) || null;
+    if (!post) {
+      mountEl.innerHTML = `
+        <div class="card">
+          <p style="color:var(--muted)">${escapeHtml(state.i18n.notFound || "Няма налично съдържание.")}</p>
+          <p><a class="btn" href="#${NEWS_PAGE_ID}">← Всички новини</a></p>
+        </div>
+      `;
+      applyContentScale();
+      return;
+    }
+
+    const img = post.image ? `<img class="news-image" src="${escapeAttr(post.image)}" alt="${escapeAttr(post.title)}" loading="lazy">` : "";
+    const body = mdToHtml(post.content || "");
+    mountEl.innerHTML = `
+      <div class="news-detail">
+        <a class="news-back" href="#${NEWS_PAGE_ID}">← Всички новини</a>
+
+        <div class="card news-card news-card--detail">
+          ${img}
+          <div class="news-body">
+            <div class="news-meta">${escapeHtml(post.date || "")}</div>
+            <h2 class="news-title">${escapeHtml(post.title)}</h2>
+            <div class="news-content">${body}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    applyContentScale();
+    return;
+  }
+
+  // List view
+  if (!items.length) {
+    mountEl.innerHTML = `
+      <div class="card">
+        <p style="color:var(--muted)">Все още няма публикувани новини.</p>
+      </div>
+    `;
+    applyContentScale();
+    return;
+  }
+
+  const cards = items.map(post => {
+    const img = post.image ? `<div class="news-thumb"><img src="${escapeAttr(post.image)}" alt="${escapeAttr(post.title)}" loading="lazy"></div>` : "";
+    const summary = post.summary ? mdToHtml(post.summary) : "";
+    return `
+      <div class="card news-card">
+        ${img}
+        <div class="news-body">
+          <div class="news-meta">${escapeHtml(post.date || "")}</div>
+          <h3 class="news-title">${escapeHtml(post.title)}</h3>
+          ${summary ? `<div class="news-summary">${summary}</div>` : ""}
+          <a class="news-more" href="#${NEWS_PAGE_ID}/${encodeURIComponent(post.slug)}">Прочети още…</a>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  mountEl.innerHTML = `<div class="news-list">${cards}</div>`;
+  applyContentScale();
+}
+
+function escapeAttr(s=""){
+  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
 // ------------------------
 // NAV transform (filter + rename per your rules)
 // ------------------------
@@ -415,6 +670,9 @@ async function loadContactPage() {
     const html = await fetchText(`content/pages/${state.lang}/contact.html`);
     contentEl.innerHTML = html;
 
+    // Content scale is applied via CSS variable (no per-node processing needed)
+    applyContentScale();
+
     // ако съществува функция за “закачане” на submit handler — извикай я, но само ако я има
     if (typeof wireContactForm === "function") {
       wireContactForm(contentEl);
@@ -427,6 +685,7 @@ async function loadContactPage() {
         <p style="color:var(--muted)">${escapeHtml(err.message || String(err))}</p>
       </div>
     `;
+    applyContentScale();
   }
 }
 
@@ -505,17 +764,22 @@ scopeEl.innerHTML = `
 // Page loader
 // ------------------------
 async function loadPageById(id) {
-  if (id === "contact") {
+  // Support detail pages like #news/<slug>
+  const [baseId, ...rest] = String(id || "").split("/");
+  const detailId = rest.join("/");
+
+  if (baseId === "contact") {
     state.current = "contact";
     highlightActive();
     renderSubnavFor(null);
     await loadContactPage();
+    applyContentScale();
     return;
   }
 
   if (!state.nav || !state.nav.length) return;
 
-  const item = state.nav.find(x => x.id === id) || state.nav[0];
+  const item = state.nav.find(x => x.id === baseId) || state.nav[0];
   state.current = item.id;
 
   const pageTitle = $("#pageTitle");
@@ -531,8 +795,13 @@ async function loadPageById(id) {
   if (!contentEl) return;
   contentEl.innerHTML = `<p style="color:var(--muted)">${escapeHtml(state.i18n.loading || "Зареждане...")}</p>`;
 
-  try {
-    if (item.type === "md") {
+try {
+    if (item.type === "news") {
+      let decodedDetail = detailId;
+      try { decodedDetail = decodeURIComponent(detailId || ""); } catch {}
+      await renderNews(contentEl, decodedDetail);
+
+    } else if (item.type === "md") {
       const md = await fetchText(`content/pages/${state.lang}/${item.src}`);
       contentEl.innerHTML = mdToHtml(md);
 
@@ -559,6 +828,9 @@ async function loadPageById(id) {
       </div>
     `;
   }
+
+  // Content scale is applied via CSS variable.
+  applyContentScale();
 }
 
 // ------------------------
@@ -665,6 +937,9 @@ async function bootstrap() {
   setHeaderTexts();
   renderNav();
 
+  // Accessibility: A-/A+ font size controls
+  initFontControls();
+
   // Some pages (e.g. legal/static pages) have their own static HTML content and
   // should NOT be replaced by the hash-based router.
   const isStaticPage = document.body && document.body.classList.contains("static-page");
@@ -673,9 +948,12 @@ async function bootstrap() {
     const initialId = (location.hash || `#${state.nav[0].id}`).replace("#", "");
     await loadPageById(initialId);
 
+    // ensure first render is scaled
+    applyContentScale();
+
     window.addEventListener("hashchange", async () => {
-      const id = (location.hash || "").replace("#", "") || state.nav[0].id;
-      await loadPageById(id);
+      const raw = (location.hash || "").replace("#", "") || state.nav[0].id;
+      await loadPageById(raw);
       setMobileNavOpen(false);
     });
   }

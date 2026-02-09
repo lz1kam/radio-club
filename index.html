@@ -38,6 +38,7 @@
           <option value="en">EN</option>
         </select>
 
+        
         <button id="menuBtn" class="iconbtn" aria-label="Menu" aria-expanded="false">☰</button>
       </div>
     </div>
@@ -71,9 +72,17 @@
 
       <div class="maincol">
         <div class="content-header">
-          <h1 id="pageTitle"> </h1>
-          <div id="breadcrumbs" class="breadcrumbs"></div>
-        </div>
+  <div class="content-titleblock">
+    <h1 id="pageTitle"> </h1>
+    <div id="breadcrumbs" class="breadcrumbs"></div>
+  </div>
+
+  <div class="content-font-controls" aria-label="Размер на текста">
+    <button id="fontInc" class="iconbtn fontbtn" type="button">A+</button>
+    <button id="fontDec" class="iconbtn fontbtn" type="button">A−</button>
+  </div>
+</div>
+
 
         <article id="pageContent" class="card"></article>
       </div>

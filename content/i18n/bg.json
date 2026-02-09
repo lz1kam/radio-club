@@ -76,10 +76,8 @@
     {
       "id": "news",
       "title": "НОВИНИ",
-      "type": "md",
-      "src": "news.md",
-      "icon": "📰",
-      "badge": "скоро"
+      "type": "news",
+      "icon": "📰"
     },
     {
       "id": "links",
