@@ -130,6 +130,7 @@ a{color:inherit}
 /* Nav row */
 .header-nav{
   background: rgba(251, 246, 239, .70);
+  position: relative; /* anchor the mobile menu overlay */
 }
 .header-nav-inner{
   padding: 10px 0 12px;
@@ -339,6 +340,13 @@ a{color:inherit}
   display:none;
   border-top: 1px solid rgba(27,27,27,.10);
   background: #fbf6efe6;
+
+  /* Show above the page content instead of pushing it down */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 1000;
 }
 .mobile-nav[aria-hidden="false"]{ display:block; }
 
@@ -940,4 +948,91 @@ a{color:inherit}
 @media (min-width: 900px){
   .news-thumb img{ height: 260px; }
   .news-image{ height: 380px; }
+}
+/* ===============================
+   NEWS LIST (with placeholder)
+   =============================== */
+
+.news-list{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.news-card{
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 18px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid rgba(27,27,27,.10);
+  box-shadow: var(--shadow);
+}
+
+.news-thumb{
+  width: 100%;
+  height: 140px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(0,0,0,.05);
+}
+
+.news-thumb img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* НЕ мачка снимките */
+  display: block;
+}
+
+.news-body{
+  display: flex;
+  flex-direction: column;
+}
+
+.news-title{
+  margin: 0 0 6px;
+  font-family: var(--fontHead);
+  font-size: 1.1em;
+}
+
+.news-summary{
+  margin: 0 0 10px;
+  color: rgba(27,27,27,.80);
+  line-height: 1.6;
+}
+
+.news-meta{
+  font-size: .85em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.news-more{
+  margin-top: auto;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.news-more:hover{
+  text-decoration: underline;
+}
+
+/* Single news */
+.news-full-img{
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  margin: 14px 0;
+}
+
+/* Mobile */
+@media (max-width: 720px){
+  .news-card{
+    grid-template-columns: 1fr;
+  }
+
+  .news-thumb{
+    height: 200px;
+  }
 }

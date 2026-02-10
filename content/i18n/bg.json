@@ -1,6 +1,6 @@
 {
   "siteTitle": "LZ1KAM - РАДИО КЛУБ ХАСКОВО",
-  "siteSubtitle": "КВ • УКВ • Радио засичане • Радио събори • Списания",
+  "siteSubtitle": "КВ • УКВ • Радио засичане • Радио събори • Регламент",
   "footerText": "© 2026 LZ1KAM Radio Club Haskovo QTH Haskovo, KN21SW",
   "loading": "Зареждане...",
   "notFound": "Няма налично съдържание.",
@@ -66,12 +66,77 @@
       "icon": "💻"
     },
     {
-      "id": "magazines",
-      "title": "СПИСАНИЯ",
-      "type": "archive",
-      "src": "magazines.json",
-      "icon": "📚",
-      "badge": "архив"
+      "id": "reglament",
+      "title": "РЕГЛАМЕНТ",
+      "type": "md",
+      "src": "reglament.md",
+      "icon": "📘"
+    },
+    {
+      "id": "reglamentOverview",
+      "title": "ОБЗОР",
+      "type": "md",
+      "src": "reglament-overview.md"
+    },
+    {
+      "id": "reglamentObshti",
+      "title": "ОБЩИ ПОЛОЖЕНИЯ",
+      "type": "md",
+      "src": "reglament-obshti.md"
+    },
+    {
+      "id": "reglamentPozivni",
+      "title": "ОПОЗНАВАТЕЛНИ ЗНАЦИ",
+      "type": "md",
+      "src": "reglament-pozivni.md"
+    },
+    {
+      "id": "reglamentUsloviya",
+      "title": "УСЛОВИЯ И ЗАДЪЛЖЕНИЯ",
+      "type": "md",
+      "src": "reglament-usloviya.md"
+    },
+    {
+      "id": "reglamentTehnicheski",
+      "title": "ТЕХНИЧЕСКИ ИЗИСКВАНИЯ",
+      "type": "md",
+      "src": "reglament-tehnicheski.md"
+    },
+    {
+      "id": "reglamentChestoti",
+      "title": "ЧЕСТОТИ И МОЩНОСТИ",
+      "type": "md",
+      "src": "reglament-chestoti.md"
+    },
+    {
+      "id": "reglamentIzpiti",
+      "title": "КЛАСОВЕ И ИЗПИТИ",
+      "type": "md",
+      "src": "reglament-izpiti.md"
+    },
+    {
+      "id": "reglamentTermini",
+      "title": "ТЕРМИНИ",
+      "type": "md",
+      "src": "reglament-termini.md"
+    },
+    {
+      "id": "reglamentFonetika",
+      "title": "ФОНЕТИЧНА АЗБУКА",
+      "type": "md",
+      "src": "reglament-fonetika.md"
+    },
+    {
+      "id": "reglamentFaq",
+      "title": "ВЪПРОСИ И ОТГОВОРИ",
+      "type": "md",
+      "src": "reglament-faq.md"
+    },
+    {
+      "id": "reglamentCheklist",
+      "title": "ЧЕКЛИСТ",
+      "type": "md",
+      "src": "reglament-cheklist.md"
     },
     {
       "id": "news",

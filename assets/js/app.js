@@ -16,6 +16,28 @@ const state = {
   galleryIndex: 0
 };
 
+// Fallback i18n/nav (used only if content/i18n/*.json cannot be loaded)
+const FALLBACK_I18N = {
+  siteTitle: "LZ1KAM - РАДИО КЛУБ ХАСКОВО",
+  siteSubtitle: "",
+  footerText: "",
+  loading: "Зареждане...",
+  notFound: "Няма налично съдържание.",
+  nav: [
+    { id:"home", title:"Начало", type:"md", src:"home.md" },
+    { id:"news", title:"НОВИНИ", type:"news" },
+    { id:"reglament", title:"РЕГЛАМЕНТ", type:"md", src:"reglament.md" },
+    { id:"contacts", title:"КОНТАКТИ", type:"md", src:"contacts.md" }
+  ]
+};
+
+// Base path helper: supports both /index.html and /www/index.html builds
+const BASE = (location.pathname.includes("/www/") || location.pathname.endsWith("/www"))
+  ? "../"
+  : "";
+
+const rel = (p) => `${BASE}${p.replace(/^\.\//, "")}`;
+
 // ------------------------
 // External News (Google Sheets) configuration
 // ------------------------
@@ -132,7 +154,20 @@ const HIDDEN_NAV_IDS = [
   "legal",
   "privacy",
   "cookies",
-  "logoTrademark"
+  "logoTrademark",
+
+  // Reglament subpages (hidden from top nav; shown in left subnav)
+  "reglamentOverview",
+  "reglamentObshti",
+  "reglamentPozivni",
+  "reglamentUsloviya",
+  "reglamentTehnicheski",
+  "reglamentChestoti",
+  "reglamentIzpiti",
+  "reglamentTermini",
+  "reglamentFonetika",
+  "reglamentFaq",
+  "reglamentCheklist"
 ];
 
 const SUBNAV_GROUPS = {
@@ -176,6 +211,19 @@ const SUBNAV_GROUPS = {
     "otherSchemesRz",
     "otherFactoryDevices",
     "otherSchemes"
+  ],
+  "reglament": [
+  "reglamentOverview",
+  "reglamentObshti",
+  "reglamentPozivni",
+  "reglamentUsloviya",
+  "reglamentTehnicheski",
+  "reglamentChestoti",
+  "reglamentIzpiti",
+  "reglamentTermini",
+  "reglamentFonetika",
+  "reglamentFaq",
+  "reglamentCheklist"
   ]
 };
 
@@ -472,7 +520,10 @@ async function renderNews(mountEl, detailSlug) {
   }
 
   const cards = items.map(post => {
-    const img = post.image ? `<div class="news-thumb"><img src="${escapeAttr(post.image)}" alt="${escapeAttr(post.title)}" loading="lazy"></div>` : "";
+    // In list view we always show a thumbnail at the left.
+    // If the Google Sheet row doesn't provide an image URL, we show the local placeholder.png.
+    const thumbUrl = post.image ? post.image : rel("content/galleries/placeholder.png");
+    const img = `<div class="news-thumb"><img src="${escapeAttr(thumbUrl)}" alt="${escapeAttr(post.title)}" loading="lazy"></div>`;
     const summary = post.summary ? mdToHtml(post.summary) : "";
     return `
       <div class="card news-card">
@@ -667,7 +718,7 @@ async function loadContactPage() {
   contentEl.innerHTML = `<p style="color:var(--muted)">${escapeHtml(state.i18n.loading || "Зареждане...")}</p>`;
 
   try {
-    const html = await fetchText(`content/pages/${state.lang}/contact.html`);
+    const html = await fetchText(rel(`content/pages/${state.lang}/contact.html`));
     contentEl.innerHTML = html;
 
     // Content scale is applied via CSS variable (no per-node processing needed)
@@ -802,15 +853,15 @@ try {
       await renderNews(contentEl, decodedDetail);
 
     } else if (item.type === "md") {
-      const md = await fetchText(`content/pages/${state.lang}/${item.src}`);
+      const md = await fetchText(rel(`content/pages/${state.lang}/${item.src}`));
       contentEl.innerHTML = mdToHtml(md);
 
     } else if (item.type === "gallery") {
-      const data = await fetchJson(`content/galleries/${state.lang}/${item.src}`);
+      const data = await fetchJson(rel(`content/galleries/${state.lang}/${item.src}`));
       renderGallery(data, contentEl);
 
     } else if (item.type === "archive") {
-      const data = await fetchJson(`content/archives/${state.lang}/${item.src}`);
+      const data = await fetchJson(rel(`content/archives/${state.lang}/${item.src}`));
       renderArchive(data, contentEl);
     } else if (item.type === "contact") {
       // Контакти: зареждаме HTML формата
@@ -919,6 +970,9 @@ function setMobileNavOpen(open) {
 
   mobile.setAttribute("aria-hidden", open ? "false" : "true");
   btn.setAttribute("aria-expanded", open ? "true" : "false");
+
+  // Toggle the button icon: ☰ when closed, "Х" (close) when open.
+  btn.textContent = open ? "Х" : "☰";
 }
 
 // ------------------------
@@ -930,11 +984,22 @@ async function bootstrap() {
   const langSelect = $("#langSelect");
   if (langSelect) langSelect.value = state.lang;
 
-  state.i18n = await fetchJson(`content/i18n/${state.lang}.json`);
-  state.nav = Array.isArray(state.i18n.nav) ? state.i18n.nav : [];
-  if (!state.nav.length) throw new Error("i18n.nav is empty or missing.");
+  // Load i18n (do not crash the whole site if it fails)
+  try {
+    state.i18n = await fetchJson(rel(`content/i18n/${state.lang}.json`));
+  } catch (e) {
+    console.warn("[i18n] Failed to load selected language, falling back to bg.json or built-in nav.", e);
+    state.lang = "bg";
+    try {
+      state.i18n = await fetchJson(rel(`content/i18n/bg.json`));
+    } catch (e2) {
+      console.warn("[i18n] Failed to load bg.json too. Using built-in fallback nav.", e2);
+      state.i18n = FALLBACK_I18N;
+    }
+  }
 
-  setHeaderTexts();
+  state.nav = Array.isArray(state.i18n.nav) && state.i18n.nav.length ? state.i18n.nav : (FALLBACK_I18N.nav || []);
+setHeaderTexts();
   renderNav();
 
   // Accessibility: A-/A+ font size controls
